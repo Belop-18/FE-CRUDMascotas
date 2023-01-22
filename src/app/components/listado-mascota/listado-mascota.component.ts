@@ -20,7 +20,7 @@ import { MascotaService } from 'src/app/services/mascota.service';
   templateUrl: './listado-mascota.component.html',
   styleUrls: ['./listado-mascota.component.css']
 })
-export class ListadoMascotaComponent implements OnInit, AfterViewInit  {
+export class ListadoMascotaComponent implements OnInit, AfterViewInit {
 
   displayedColumns: string[] = ['nombre', 'edad', 'raza', 'color', 'peso', 'acciones'];
   dataSource = new MatTableDataSource<Mascota>(/*listMascotas*/);
@@ -29,8 +29,8 @@ export class ListadoMascotaComponent implements OnInit, AfterViewInit  {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private _snackBar: MatSnackBar, 
-              private _mascotaService:MascotaService) { }
+  constructor(private _snackBar: MatSnackBar,
+    private _mascotaService: MascotaService) { }
 
   ngOnInit(): void {
     this.obtenerMascotas();
@@ -39,7 +39,7 @@ export class ListadoMascotaComponent implements OnInit, AfterViewInit  {
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
-    if (this.dataSource.data.length > 0){
+    if (this.dataSource.data.length > 0) {
       this.paginator._intl.itemsPerPageLabel = 'Items por página'
     }
   }
@@ -60,16 +60,21 @@ export class ListadoMascotaComponent implements OnInit, AfterViewInit  {
     }*/);
   }
 
-  eliminarMascota() {
+  eliminarMascota(id: number) {
     this.loading = true;
 
-    setTimeout(() => {
+    this._mascotaService.deleteMascota(id).subscribe(() => {
+      this.mensajeExito();
       this.loading = false;
-      this._snackBar.open('La mascota fue eliminada con éxito', '', {
-        duration: 4000,
-        horizontalPosition: 'right'
-      });
-    }, 3000);
+      this.obtenerMascotas();
+    });
+  }
+
+  mensajeExito() {
+    this._snackBar.open('La mascota fue eliminada con éxito', '', {
+      duration: 4000,
+      horizontalPosition: 'right'
+    });
   }
 
 }
